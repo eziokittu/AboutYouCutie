@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import AudioPlayer from 'react-h5-audio-player';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Stuff from './components/Stuff';
 import Games from './components/Games';
 import Other from './components/Other';
@@ -57,7 +57,7 @@ const App = () => {
               {musicPlaying ? (
                 <div className="cursor-pointer" onClick={handlePause}>
                   <svg className='w-10 h-10' fill="currentColor" viewBox="-1 0 8 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
-                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>pause [#1010]</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Page-1"  strokeWidth="1" fill="currentColor" fillRule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-67.000000, -3765.000000)" fill="currentColor"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M11,3613 L13,3613 L13,3605 L11,3605 L11,3613 Z M15,3613 L17,3613 L17,3605 L15,3605 L15,3613 Z" id="pause-[#1010]"> </path> </g> </g> </g> </g>
+                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>pause [#1010]</title> <desc>Created with Sketch.</desc> <defs> </defs> <g id="Page-1" strokeWidth="1" fill="currentColor" fillRule="evenodd"> <g id="Dribbble-Light-Preview" transform="translate(-67.000000, -3765.000000)" fill="currentColor"> <g id="icons" transform="translate(56.000000, 160.000000)"> <path d="M11,3613 L13,3613 L13,3605 L11,3605 L11,3613 Z M15,3613 L17,3613 L17,3605 L15,3605 L15,3613 Z" id="pause-[#1010]"> </path> </g> </g> </g> </g>
                   </svg>
                 </div>
               ) : (
@@ -93,6 +93,8 @@ const App = () => {
           <Route exact path="" element={<Stuff />} />
           <Route exact path="/games" element={<Games />} />
           <Route exact path="/other" element={<Other />} />
+          {/* Catch-all route for invalid paths */}
+          <Route path="*" element={<Navigate to="/stuff" replace />} />
         </Routes>
       </BrowserRouter>
 

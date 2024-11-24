@@ -5,8 +5,9 @@ import StuffContent from '../reusable/StuffContent';
 const Stuff = () => {
   const [contentIndex, setContentIndex] = useState(0); // Index of current content
   const [descriptionIndex, setDescriptionIndex] = useState(0); // Index of current description
+  const [isPaused, setIsPaused] = useState(false); // To track whether the timer is paused
   const timeoutRef = useRef(null); // Reference for the timer to manage clear/reset operations
-  const contentSwitchTime = 1000*8;
+  const contentSwitchTime = 1000 * 6; // 8 seconds timer for auto-switch
 
   // Calculate total descriptions for progress bar
   const totalDescriptions = contentData.contents.reduce(
@@ -19,19 +20,36 @@ const Stuff = () => {
     .slice(0, contentIndex)
     .reduce((acc, content) => acc + content.descriptions.length, 0) + descriptionIndex;
 
+  // Clear the existing timer
   const clearExistingTimeout = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current); // Clear any existing timeout
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
   };
 
+  // Start the auto-switch timer
   const startAutoSwitch = () => {
     clearExistingTimeout(); // Ensure no duplicate timers
-    timeoutRef.current = setTimeout(nextContent, contentSwitchTime); // Start a new timer
+    if (!isPaused) {
+      timeoutRef.current = setTimeout(nextContent, contentSwitchTime); // Start a new timer
+    }
   };
 
+  // Pause the timer
+  const handleMouseDown = () => {
+    setIsPaused(true); // Pause the timer
+    clearExistingTimeout(); // Clear the current timer
+  };
+
+  // Resume the timer
+  const handleMouseUp = () => {
+    setIsPaused(false); // Resume the timer
+    startAutoSwitch(); // Restart the timer
+  };
+
+  // Auto-switch timer logic
   useEffect(() => {
     startAutoSwitch();
     return clearExistingTimeout; // Cleanup on component unmount
-  }, [descriptionIndex, contentIndex]);
+  }, [descriptionIndex, contentIndex, isPaused]);
 
   const prevContent = () => {
     clearExistingTimeout(); // Reset timer on manual navigation
@@ -66,7 +84,11 @@ const Stuff = () => {
   };
 
   return (
-    <div className='min-h-screen flex flex-col items-center justify-center gap-4 '>
+    <div
+      className="min-h-screen flex flex-col items-center justify-center gap-4"
+      onMouseDown={handleMouseDown} // Pause timer
+      onMouseUp={handleMouseUp} // Resume timer
+    >
       <div className="relative flex flex-col items-center justify-center h-full mt-40">
         {/* Progress Bar */}
         <div className="fixed top-20 left-0 w-full h-2 flex">
@@ -93,7 +115,7 @@ const Stuff = () => {
 
         {/* Content */}
         {contentData && contentData.contents.length > 0 && (
-          <div className=' -translate-y-24'>
+          <div className=" -translate-y-24">
             <StuffContent
               heading={contentData.contents[contentIndex].heading}
               description={contentData.contents[contentIndex].descriptions[descriptionIndex]}
